@@ -1,0 +1,6 @@
+{
+  "name": "감수분열 직접 진행해보기",
+  "description": "중학교 3학년 생식과 유전: 2n=6 생식세포 분열(감수분열) 인터랙티브 시뮬레이터 및 개념 비교 분석",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
