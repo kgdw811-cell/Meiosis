@@ -45,9 +45,8 @@ export const Step3Meiosis2: React.FC<Step3Meiosis2Props> = ({ onComplete, showTo
     // Initialize for Cell 0 (Paternal) and Cell 1 (Maternal)
     [0, 1].forEach((cellIdx) => {
       const cellRef = cellIdx === 0 ? cell0Ref.current : cell1Ref.current;
-      const rect = cellRef?.getBoundingClientRect();
-      const cellW = rect?.width || 380;
-      const cellH = Math.max(520, rect?.height || 560);
+      const cellW = cellRef?.clientWidth || cellRef?.getBoundingClientRect().width || 380;
+      const cellH = cellRef?.clientHeight || cellRef?.getBoundingClientRect().height || 520;
       const origin: OriginType = cellIdx === 0 ? 'paternal' : 'maternal';
 
       PAIR_SIZES.forEach((size, idx) => {
@@ -65,7 +64,7 @@ export const Step3Meiosis2: React.FC<Step3Meiosis2Props> = ({ onComplete, showTo
           size,
           targetPole: 'upper',
           x: colX,
-          y: centerY - chrArmH - 10,
+          y: centerY - chrArmH - 8,
           isSplit: false,
           pole: undefined
         });
@@ -79,7 +78,7 @@ export const Step3Meiosis2: React.FC<Step3Meiosis2Props> = ({ onComplete, showTo
           size,
           targetPole: 'lower',
           x: colX,
-          y: centerY + 10,
+          y: centerY + 8,
           isSplit: false,
           pole: undefined
         });
@@ -145,8 +144,8 @@ export const Step3Meiosis2: React.FC<Step3Meiosis2Props> = ({ onComplete, showTo
       const dx = e.clientX - dragInfo.current.startX;
 
       const cellRef = dragInfo.current.cellIndex === 0 ? cell0Ref.current : cell1Ref.current;
-      const cellH = Math.max(520, cellRef?.getBoundingClientRect().height || 560);
-      const cellW = cellRef?.getBoundingClientRect().width || 380;
+      const cellW = cellRef?.clientWidth || cellRef?.getBoundingClientRect().width || 380;
+      const cellH = cellRef?.clientHeight || cellRef?.getBoundingClientRect().height || 520;
 
       // Allow natural vertical dragging with slight horizontal flexibility
       const newX = Math.max(10, Math.min(cellW - 55, dragInfo.current.origX + dx * 0.6));
@@ -169,8 +168,8 @@ export const Step3Meiosis2: React.FC<Step3Meiosis2Props> = ({ onComplete, showTo
       setActiveDraggingId(null);
 
       const cellRef = cellIdx === 0 ? cell0Ref.current : cell1Ref.current;
-      const cellH = Math.max(520, cellRef?.getBoundingClientRect().height || 560);
-      const cellW = cellRef?.getBoundingClientRect().width || 380;
+      const cellW = cellRef?.clientWidth || cellRef?.getBoundingClientRect().width || 380;
+      const cellH = cellRef?.clientHeight || cellRef?.getBoundingClientRect().height || 520;
       const centerY = cellH * 0.5;
 
       const dragged = chromatids.find((c) => c.id === draggedId);
@@ -202,7 +201,7 @@ export const Step3Meiosis2: React.FC<Step3Meiosis2Props> = ({ onComplete, showTo
       } else {
         // Did not reach the pole zone - snap back to equator resting position
         sound.playSnap();
-        const restY = dragged.targetPole === 'upper' ? centerY - chrArmH - 10 : centerY + 10;
+        const restY = dragged.targetPole === 'upper' ? centerY - chrArmH - 8 : centerY + 8;
         showToast(`💡 ${dragged.size.name} 자매염색분체를 ${dragged.targetPole === 'upper' ? '위쪽 극' : '아래쪽 극'}까지 끝까지 드래그하세요!`);
 
         setChromatids((prev) =>
@@ -245,7 +244,7 @@ export const Step3Meiosis2: React.FC<Step3Meiosis2Props> = ({ onComplete, showTo
     sound.playSuccess();
     const updated = chromatids.map((c) => {
       const cellRef = c.cellIndex === 0 ? cell0Ref.current : cell1Ref.current;
-      const cellH = Math.max(520, cellRef?.getBoundingClientRect().height || 560);
+      const cellH = cellRef?.clientHeight || cellRef?.getBoundingClientRect().height || 520;
       const targetY =
         c.targetPole === 'upper'
           ? cellH * 0.14 + (c.pairId % 2 === 0 ? -4 : 6)
@@ -368,8 +367,8 @@ export const Step3Meiosis2: React.FC<Step3Meiosis2Props> = ({ onComplete, showTo
                 {(() => {
                   const rect = cellRef.current?.getBoundingClientRect();
                   if (!rect) return null;
-                  const w = rect.width;
-                  const h = rect.height;
+                  const w = cellRef.current?.clientWidth || rect.width;
+                  const h = cellRef.current?.clientHeight || rect.height;
                   const upperPoleX = w * 0.5;
                   const upperPoleY = 32;
                   const lowerPoleX = w * 0.5;
@@ -489,12 +488,8 @@ export const Step3Meiosis2: React.FC<Step3Meiosis2Props> = ({ onComplete, showTo
 
                   const isPairSplit = upper.isSplit && lower.isSplit;
 
-                  // 1) BEFORE CLICK: Unified Horizontal X Chromosome on equatorial plate
+                  // 1) BEFORE CLICK: Unified Horizontal X Chromosome precisely centered on equatorial plate
                   if (!isPairSplit) {
-                    const rect = cellRef.current?.getBoundingClientRect();
-                    const cellH = Math.max(680, rect?.height || 720);
-                    const centerY = cellH * 0.5;
-
                     return (
                       <div
                         key={`unsplit-${upper.id}-${lower.id}`}
@@ -502,7 +497,8 @@ export const Step3Meiosis2: React.FC<Step3Meiosis2Props> = ({ onComplete, showTo
                         style={{
                           position: 'absolute',
                           left: `${upper.x}px`,
-                          top: `${centerY - armH / 2}px`,
+                          top: '50%',
+                          marginTop: `-${armH / 2}px`,
                           width: `${armW}px`,
                           height: `${armH}px`,
                           touchAction: 'none',
@@ -514,7 +510,7 @@ export const Step3Meiosis2: React.FC<Step3Meiosis2Props> = ({ onComplete, showTo
                         title={`${size.name} 염색체 - 클릭하여 동원체를 분리하세요!`}
                       >
                         {/* Interactive Click-to-Split Badge */}
-                        <span className="absolute -top-8 text-xs font-black text-amber-900 bg-amber-300 border-2 border-amber-400 px-3 py-1 rounded-full shadow-md animate-bounce whitespace-nowrap z-40">
+                        <span className="absolute -top-8 text-xs font-black text-amber-900 bg-amber-300 border-2 border-amber-400 px-3 py-1 rounded-full shadow-md animate-bounce whitespace-nowrap z-40 pointer-events-none">
                           👆 클릭하여 분리
                         </span>
 

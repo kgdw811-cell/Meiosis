@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { PAIR_SIZES } from '../data/chromosomes';
-import { ChromosomeItem, OriginType } from '../types';
+import { ChromosomeItem, ChromosomeSize, OriginType } from '../types';
 import { ChromosomeSVG } from './ChromosomeSVG';
 import { sound } from '../utils/audio';
 import { Sparkles, CheckCircle2, Wand2 } from 'lucide-react';
@@ -25,49 +25,132 @@ export const Step1Prophase: React.FC<Step1ProphaseProps> = ({ onComplete, showTo
     origY: number;
   }>({ id: null, startX: 0, startY: 0, origX: 0, origY: 0 });
 
-  // Initialize chromosomes placement
+  // Initialize chromosomes placement strictly inside nuclear membrane (red dashed line) with no overlapping
   const initPositions = () => {
     if (!containerRef.current) return;
     const rect = containerRef.current.getBoundingClientRect();
-    const w = Math.max(320, rect.width || window.innerWidth);
-    const h = Math.max(500, rect.height || 540);
+    const w = containerRef.current.clientWidth || rect.width || window.innerWidth;
+    const h = containerRef.current.clientHeight || rect.height || 520;
 
-    const items: ChromosomeItem[] = [];
-    const list: { pairId: number; origin: OriginType }[] = [];
-
+    // List of 6 chromosomes (3 homologous pairs: paternal & maternal)
+    const list: { pairId: number; origin: OriginType; size: ChromosomeSize }[] = [];
     PAIR_SIZES.forEach((s) => {
-      list.push({ pairId: s.id, origin: 'paternal' });
-      list.push({ pairId: s.id, origin: 'maternal' });
+      list.push({ pairId: s.id, origin: 'paternal', size: s });
+      list.push({ pairId: s.id, origin: 'maternal', size: s });
     });
 
-    // Shuffle
+    // Shuffle placement order
     list.sort(() => Math.random() - 0.5);
 
-    list.forEach((data, idx) => {
-      const sizeObj = PAIR_SIZES.find((p) => p.id === data.pairId)!;
-      // Spread across middle cell circle
-      const angle = (idx / list.length) * 2 * Math.PI + (Math.random() * 0.4 - 0.2);
-      const radiusX = Math.min(w * 0.32, 260) * (0.45 + Math.random() * 0.45);
-      const radiusY = Math.min(h * 0.32, 190) * (0.45 + Math.random() * 0.45);
+    const placedItems: ChromosomeItem[] = [];
 
-      const cx = w / 2 - sizeObj.w / 2;
-      const cy = h / 2 - sizeObj.h / 2;
+    // Red dashed nuclear envelope ellipse boundaries inside container
+    const cellW = Math.min(w, 896);
+    const cellH = Math.min(h, 520);
+    const centerX = w / 2;
+    const centerY = h / 2;
+    const Rx = cellW * 0.42; // w-[84%] / 2
+    const Ry = cellH * 0.42; // h-[84%] / 2
 
-      const posX = Math.max(20, Math.min(w - sizeObj.w - 20, cx + Math.cos(angle) * radiusX));
-      const posY = Math.max(20, Math.min(h - sizeObj.h - 30, cy + Math.sin(angle) * radiusY));
+    for (const item of list) {
+      const sw = item.size.w;
+      const sh = item.size.h;
+      const padX = sw / 2 + 10;
+      const padY = sh / 2 + 12;
+      const safeRx = Math.max(60, Rx - padX);
+      const safeRy = Math.max(50, Ry - padY);
 
-      items.push({
-        id: `chr-${data.pairId}-${data.origin}`,
-        pairId: data.pairId,
-        origin: data.origin,
-        size: sizeObj,
-        x: posX,
-        y: posY,
-        isPaired: false
-      });
-    });
+      let bestPos: { x: number; y: number } | null = null;
 
-    setChromosomes(items);
+      // Try random positions inside safe ellipse zone with strict overlap check
+      for (let attempt = 0; attempt < 300; attempt++) {
+        const r = Math.sqrt(Math.random() * 0.82); // strictly within 82% radius
+        const theta = Math.random() * 2 * Math.PI;
+        const candidateCenterX = centerX + r * safeRx * Math.cos(theta);
+        const candidateCenterY = centerY + r * safeRy * Math.sin(theta);
+
+        const candX = candidateCenterX - sw / 2;
+        const candY = candidateCenterY - sh / 2;
+
+        // Clearance for top label badge inside nuclear envelope
+        if (candY < centerY - Ry + 64 && Math.abs(candidateCenterX - centerX) < 145) {
+          continue;
+        }
+
+        // Elliptical boundary constraint: must remain fully inside red dotted line
+        const normDist =
+          Math.pow((candidateCenterX - centerX) / safeRx, 2) +
+          Math.pow((candidateCenterY - centerY) / safeRy, 2);
+        if (normDist > 1.0) continue;
+
+        // No-overlap check against all already placed chromosomes
+        let overlaps = false;
+        for (const p of placedItems) {
+          const pcx = p.x + p.size.w / 2;
+          const pcy = p.y + p.size.h / 2;
+          const dx = Math.abs(candidateCenterX - pcx);
+          const dy = Math.abs(candidateCenterY - pcy);
+          const reqX = (sw + p.size.w) / 2 + 16;
+          const reqY = (sh + p.size.h) / 2 + 16;
+
+          if (dx < reqX && dy < reqY) {
+            overlaps = true;
+            break;
+          }
+
+          // Prevent homologous partner from spawning in immediate auto-snap range
+          if (p.pairId === item.pairId) {
+            const partnerDist = Math.hypot(candidateCenterX - pcx, candidateCenterY - pcy);
+            if (partnerDist < 125) {
+              overlaps = true;
+              break;
+            }
+          }
+        }
+
+        if (!overlaps) {
+          bestPos = { x: candX, y: candY };
+          break;
+        }
+      }
+
+      // Deterministic spread fallback if candidate search was tight
+      if (!bestPos) {
+        let maxDist = -1;
+        for (let a = 0; a < 48; a++) {
+          const theta = (a / 48) * 2 * Math.PI;
+          for (const factor of [0.35, 0.65]) {
+            const ccx = centerX + factor * safeRx * Math.cos(theta);
+            const ccy = centerY + factor * safeRy * Math.sin(theta);
+            if (ccy < centerY - Ry + 64 && Math.abs(ccx - centerX) < 145) continue;
+
+            let minDistToAny = Infinity;
+            for (const p of placedItems) {
+              const d = Math.hypot(ccx - (p.x + p.size.w / 2), ccy - (p.y + p.size.h / 2));
+              if (d < minDistToAny) minDistToAny = d;
+            }
+            if (minDistToAny > maxDist) {
+              maxDist = minDistToAny;
+              bestPos = { x: ccx - sw / 2, y: ccy - sh / 2 };
+            }
+          }
+        }
+      }
+
+      if (bestPos) {
+        placedItems.push({
+          id: `chr-${item.pairId}-${item.origin}`,
+          pairId: item.pairId,
+          origin: item.origin,
+          size: item.size,
+          x: bestPos.x,
+          y: bestPos.y,
+          isPaired: false
+        });
+      }
+    }
+
+    setChromosomes(placedItems);
     setPairedCount(0);
   };
 
@@ -234,8 +317,8 @@ export const Step1Prophase: React.FC<Step1ProphaseProps> = ({ onComplete, showTo
           {/* Equator & cell center guides */}
           <div className="w-0.5 h-[88%] border-l-2 border-dashed border-rose-300/70 absolute left-1/2 -translate-x-1/2" />
           
-          {/* Cell Nucleus vanishing envelope border (핵막 소실 표현) */}
-          <div className="w-[84%] h-[84%] border-2 border-dotted border-rose-300/80 rounded-[46%] flex items-center justify-center relative">
+          {/* Cell Nucleus vanishing envelope border (핵막 소실 표현 빨간 점선) */}
+          <div className="w-[84%] h-[84%] border-2 border-dashed border-rose-400/90 rounded-[46%] flex items-center justify-center relative">
             <span className="absolute top-4 text-xs sm:text-sm font-black text-rose-600 bg-rose-50/95 px-3.5 py-1 rounded-full border border-rose-200 shadow-xs">
               핵막 소실 및 2가 염색체 형성 (전기 I)
             </span>

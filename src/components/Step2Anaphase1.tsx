@@ -219,12 +219,16 @@ export const Step2Anaphase1: React.FC<Step2Anaphase1Props> = ({ onComplete, show
           {/* Central Equatorial Plate (적도면) with Spindle Center */}
           <div className="absolute left-1/2 -translate-x-1/2 inset-y-0 flex flex-col items-center justify-center pointer-events-none z-10">
             <div className="h-[90%] w-0.5 border-l-2 border-dashed border-rose-400 opacity-75" />
-            <span className="absolute top-4 text-xs sm:text-sm font-black text-rose-700 bg-rose-50 px-4 py-1 rounded-full border-2 border-rose-200 shadow-xs">
-              적도면
-            </span>
-            <span className="absolute bottom-4 text-xs font-bold text-slate-500 bg-white/90 px-3 py-0.5 rounded-full border border-slate-200">
-              세포질 만입부
-            </span>
+            <div className="absolute top-3.5 flex flex-col items-center justify-center px-1.5 py-2 text-xs sm:text-sm font-black text-rose-700 bg-rose-50 rounded-full border-2 border-rose-200 shadow-xs leading-tight whitespace-nowrap">
+              <span>적</span>
+              <span>도</span>
+              <span>면</span>
+            </div>
+            <div className="absolute bottom-3.5 flex flex-col items-center justify-center px-1.5 py-2 text-xs sm:text-sm font-black text-rose-700 bg-rose-50 rounded-full border-2 border-rose-200 shadow-xs leading-tight whitespace-nowrap">
+              <span>적</span>
+              <span>도</span>
+              <span>면</span>
+            </div>
           </div>
 
           {/* Right Centrosome / Pole */}
