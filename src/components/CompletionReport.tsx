@@ -134,10 +134,10 @@ export const CompletionReport: React.FC<CompletionReportProps> = ({ onRestart, o
                 </div>
 
                 {/* Enlarged Chromosomes Display Area (1번~3번 3개 염색체 확대 표시) */}
-                <div className="bg-white rounded-xl p-3 sm:p-4 border border-slate-200 shadow-inner flex items-center justify-around gap-2 min-h-[140px] sm:min-h-[155px]">
+                <div className="bg-white rounded-xl p-3 sm:p-4 border border-slate-200 shadow-inner flex items-center justify-around gap-2 min-h-[165px] sm:min-h-[185px]">
                   {PAIR_SIZES.map((size) => (
                     <div key={`cell-${cell.cellNum}-${size.id}`} className="flex flex-col items-center justify-end h-full">
-                      <div className="flex items-center justify-center min-h-[90px] sm:min-h-[105px]">
+                      <div className="flex items-center justify-center min-h-[120px] sm:min-h-[145px]">
                         <ChromosomeSVG
                           size={size}
                           origin={cell.origin}

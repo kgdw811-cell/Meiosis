@@ -1,9 +1,9 @@
 import { ChromosomeSize } from '../types';
 
 export const PAIR_SIZES: ChromosomeSize[] = [
-  { id: 1, name: '1번', label: '대형 염색체 (1번)', h: 105, w: 32 },
-  { id: 2, name: '2번', label: '중형 염색체 (2번)', h: 80, w: 26 },
-  { id: 3, name: '3번', label: '소형 염색체 (3번)', h: 58, w: 22 }
+  { id: 1, name: '1번', label: '대형 염색체 (1번)', h: 135, w: 38 },
+  { id: 2, name: '2번', label: '중형 염색체 (2번)', h: 102, w: 30 },
+  { id: 3, name: '3번', label: '소형 염색체 (3번)', h: 75, w: 24 }
 ];
 
 export const STEP_INFOS = {

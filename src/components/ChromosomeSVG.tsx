@@ -28,17 +28,17 @@ export const ChromosomeSVG: React.FC<ChromosomeSVGProps> = ({
 
   const w = size.w;
   const h = size.h;
-  const strokeW = Math.max(5, Math.min(8, w * 0.28));
+  const strokeW = Math.max(6, Math.min(9.5, w * 0.28));
   const cx = w / 2;
   const cy = h / 2;
 
   if (type === 'horizontal-X') {
-    const armH = Math.max(28, h * 0.65);
-    const armW = Math.max(34, w * 1.15);
+    const armH = Math.max(54, h * 0.88);
+    const armW = Math.max(46, w * 1.2);
     const midX = armW / 2;
     const midY = armH / 2;
-    const sW = Math.max(5, Math.min(7.5, armW * 0.16));
-    const centromereR = sW * 0.85;
+    const sW = Math.max(6, Math.min(8.5, armW * 0.16));
+    const centromereR = sW * 0.9;
 
     return (
       <div 
@@ -55,7 +55,7 @@ export const ChromosomeSVG: React.FC<ChromosomeSVGProps> = ({
         >
           {/* Upper sister chromatid meeting directly at center (midX, midY) */}
           <path
-            d={`M 5 4 Q ${midX * 0.5} 4 ${midX} ${midY} Q ${armW - midX * 0.5} 4 ${armW - 5} 4`}
+            d={`M 5 5 Q ${midX * 0.5} 5 ${midX} ${midY} Q ${armW - midX * 0.5} 5 ${armW - 5} 5`}
             stroke={fillColor}
             strokeWidth={sW}
             strokeLinecap="round"
@@ -64,7 +64,7 @@ export const ChromosomeSVG: React.FC<ChromosomeSVGProps> = ({
 
           {/* Lower sister chromatid meeting directly at center (midX, midY) */}
           <path
-            d={`M 5 ${armH - 4} Q ${midX * 0.5} ${armH - 4} ${midX} ${midY} Q ${armW - midX * 0.5} ${armH - 4} ${armW - 5} ${armH - 4}`}
+            d={`M 5 ${armH - 5} Q ${midX * 0.5} ${armH - 5} ${midX} ${midY} Q ${armW - midX * 0.5} ${armH - 5} ${armW - 5} ${armH - 5}`}
             stroke={fillColor}
             strokeWidth={sW}
             strokeLinecap="round"
@@ -75,45 +75,45 @@ export const ChromosomeSVG: React.FC<ChromosomeSVGProps> = ({
           <circle
             cx={midX}
             cy={midY}
-            r={centromereR + 2.5}
+            r={centromereR + 3}
             fill={fillColor}
           />
 
           {/* Banding patterns on all 4 arms */}
           <line
             x1={midX - armW * 0.28}
-            y1={midY - armH * 0.22}
+            y1={midY - armH * 0.24}
             x2={midX - armW * 0.28}
-            y2={midY - armH * 0.38}
+            y2={midY - armH * 0.42}
             stroke={lightColor}
-            strokeWidth={2}
+            strokeWidth={2.5}
             strokeLinecap="round"
           />
           <line
             x1={midX + armW * 0.28}
-            y1={midY - armH * 0.22}
+            y1={midY - armH * 0.24}
             x2={midX + armW * 0.28}
-            y2={midY - armH * 0.38}
+            y2={midY - armH * 0.42}
             stroke={lightColor}
-            strokeWidth={2}
+            strokeWidth={2.5}
             strokeLinecap="round"
           />
           <line
             x1={midX - armW * 0.28}
-            y1={midY + armH * 0.22}
+            y1={midY + armH * 0.24}
             x2={midX - armW * 0.28}
-            y2={midY + armH * 0.38}
+            y2={midY + armH * 0.42}
             stroke={lightColor}
-            strokeWidth={2}
+            strokeWidth={2.5}
             strokeLinecap="round"
           />
           <line
             x1={midX + armW * 0.28}
-            y1={midY + armH * 0.22}
+            y1={midY + armH * 0.24}
             x2={midX + armW * 0.28}
-            y2={midY + armH * 0.38}
+            y2={midY + armH * 0.42}
             stroke={lightColor}
-            strokeWidth={2}
+            strokeWidth={2.5}
             strokeLinecap="round"
           />
 
@@ -124,7 +124,7 @@ export const ChromosomeSVG: React.FC<ChromosomeSVGProps> = ({
             r={centromereR}
             fill="#facc15"
             stroke="#b45309"
-            strokeWidth={1.4}
+            strokeWidth={1.5}
             className="drop-shadow-xs"
           />
           <circle
@@ -137,7 +137,7 @@ export const ChromosomeSVG: React.FC<ChromosomeSVGProps> = ({
 
         {showLabel && (
           <span
-            className={`absolute -bottom-4 text-[10px] font-black px-1.5 py-0.2 rounded-full border shadow-xs whitespace-nowrap ${
+            className={`absolute -bottom-5 text-xs font-black px-2 py-0.5 rounded-full border shadow-xs whitespace-nowrap ${
               isPaternal
                 ? 'bg-blue-50 text-blue-700 border-blue-300'
                 : 'bg-rose-50 text-rose-700 border-rose-300'
@@ -151,12 +151,12 @@ export const ChromosomeSVG: React.FC<ChromosomeSVGProps> = ({
   }
 
   if (type === 'chromatid-upper') {
-    const armH = Math.max(22, h * 0.5);
-    const armW = Math.max(34, w * 1.15);
+    const armH = Math.max(44, h * 0.72);
+    const armW = Math.max(46, w * 1.2);
     const midX = armW / 2;
-    const sW = Math.max(5, Math.min(7.5, armW * 0.16));
-    const centromereR = sW * 0.75;
-    const apexY = 5;
+    const sW = Math.max(6, Math.min(8.5, armW * 0.16));
+    const centromereR = sW * 0.85;
+    const apexY = 6;
 
     return (
       <div 
@@ -171,7 +171,7 @@ export const ChromosomeSVG: React.FC<ChromosomeSVGProps> = ({
         >
           {/* Upper chromatid arch meeting directly at centromere apex (midX, apexY) */}
           <path
-            d={`M 5 ${armH - 4} Q ${midX * 0.6} ${apexY} ${midX} ${apexY} Q ${midX + (armW - midX) * 0.4} ${apexY} ${armW - 5} ${armH - 4}`}
+            d={`M 5 ${armH - 5} Q ${midX * 0.6} ${apexY} ${midX} ${apexY} Q ${midX + (armW - midX) * 0.4} ${apexY} ${armW - 5} ${armH - 5}`}
             stroke={fillColor}
             strokeWidth={sW}
             strokeLinecap="round"
@@ -182,27 +182,27 @@ export const ChromosomeSVG: React.FC<ChromosomeSVGProps> = ({
           <circle
             cx={midX}
             cy={apexY}
-            r={centromereR + 2.5}
+            r={centromereR + 3}
             fill={fillColor}
           />
 
           {/* Banding patterns */}
           <line
             x1={midX - armW * 0.28}
-            y1={armH * 0.65}
+            y1={armH * 0.68}
             x2={midX - armW * 0.28}
             y2={armH * 0.35}
             stroke={lightColor}
-            strokeWidth={2}
+            strokeWidth={2.5}
             strokeLinecap="round"
           />
           <line
             x1={midX + armW * 0.28}
-            y1={armH * 0.65}
+            y1={armH * 0.68}
             x2={midX + armW * 0.28}
             y2={armH * 0.35}
             stroke={lightColor}
-            strokeWidth={2}
+            strokeWidth={2.5}
             strokeLinecap="round"
           />
 
@@ -213,7 +213,7 @@ export const ChromosomeSVG: React.FC<ChromosomeSVGProps> = ({
             r={centromereR}
             fill="#facc15"
             stroke="#b45309"
-            strokeWidth={1.4}
+            strokeWidth={1.5}
             className="drop-shadow-xs"
           />
           <circle
@@ -226,7 +226,7 @@ export const ChromosomeSVG: React.FC<ChromosomeSVGProps> = ({
 
         {showLabel && (
           <span
-            className={`absolute -bottom-4 text-[10px] font-bold px-1.5 py-0.2 rounded-full border shadow-xs whitespace-nowrap ${
+            className={`absolute -bottom-5 text-xs font-black px-2 py-0.5 rounded-full border shadow-xs whitespace-nowrap ${
               isPaternal ? 'bg-blue-100 text-blue-800 border-blue-300' : 'bg-rose-100 text-rose-800 border-rose-300'
             }`}
           >
@@ -238,12 +238,12 @@ export const ChromosomeSVG: React.FC<ChromosomeSVGProps> = ({
   }
 
   if (type === 'chromatid-lower') {
-    const armH = Math.max(22, h * 0.5);
-    const armW = Math.max(34, w * 1.15);
+    const armH = Math.max(44, h * 0.72);
+    const armW = Math.max(46, w * 1.2);
     const midX = armW / 2;
-    const sW = Math.max(5, Math.min(7.5, armW * 0.16));
-    const centromereR = sW * 0.75;
-    const apexY = armH - 5;
+    const sW = Math.max(6, Math.min(8.5, armW * 0.16));
+    const centromereR = sW * 0.85;
+    const apexY = armH - 6;
 
     return (
       <div 
@@ -258,7 +258,7 @@ export const ChromosomeSVG: React.FC<ChromosomeSVGProps> = ({
         >
           {/* Lower chromatid arch meeting directly at bottom centromere apex (midX, apexY) */}
           <path
-            d={`M 5 4 Q ${midX * 0.6} ${apexY} ${midX} ${apexY} Q ${midX + (armW - midX) * 0.4} ${apexY} ${armW - 5} 4`}
+            d={`M 5 5 Q ${midX * 0.6} ${apexY} ${midX} ${apexY} Q ${midX + (armW - midX) * 0.4} ${apexY} ${armW - 5} 5`}
             stroke={fillColor}
             strokeWidth={sW}
             strokeLinecap="round"
@@ -269,27 +269,27 @@ export const ChromosomeSVG: React.FC<ChromosomeSVGProps> = ({
           <circle
             cx={midX}
             cy={apexY}
-            r={centromereR + 2.5}
+            r={centromereR + 3}
             fill={fillColor}
           />
 
           {/* Banding patterns */}
           <line
             x1={midX - armW * 0.28}
-            y1={armH * 0.35}
+            y1={armH * 0.32}
             x2={midX - armW * 0.28}
             y2={armH * 0.65}
             stroke={lightColor}
-            strokeWidth={2}
+            strokeWidth={2.5}
             strokeLinecap="round"
           />
           <line
             x1={midX + armW * 0.28}
-            y1={armH * 0.35}
+            y1={armH * 0.32}
             x2={midX + armW * 0.28}
             y2={armH * 0.65}
             stroke={lightColor}
-            strokeWidth={2}
+            strokeWidth={2.5}
             strokeLinecap="round"
           />
 
@@ -300,7 +300,7 @@ export const ChromosomeSVG: React.FC<ChromosomeSVGProps> = ({
             r={centromereR}
             fill="#facc15"
             stroke="#b45309"
-            strokeWidth={1.4}
+            strokeWidth={1.5}
             className="drop-shadow-xs"
           />
           <circle
@@ -313,7 +313,7 @@ export const ChromosomeSVG: React.FC<ChromosomeSVGProps> = ({
 
         {showLabel && (
           <span
-            className={`absolute -bottom-4 text-[10px] font-bold px-1.5 py-0.2 rounded-full border shadow-xs whitespace-nowrap ${
+            className={`absolute -bottom-5 text-xs font-black px-2 py-0.5 rounded-full border shadow-xs whitespace-nowrap ${
               isPaternal ? 'bg-blue-100 text-blue-800 border-blue-300' : 'bg-rose-100 text-rose-800 border-rose-300'
             }`}
           >
@@ -389,7 +389,7 @@ export const ChromosomeSVG: React.FC<ChromosomeSVGProps> = ({
 
         {showLabel && (
           <span
-            className={`absolute -bottom-4 text-[10px] font-bold px-1.5 py-0.2 rounded-full border shadow-xs whitespace-nowrap ${
+            className={`absolute -bottom-5 text-xs font-black px-2 py-0.5 rounded-full border shadow-xs whitespace-nowrap ${
               isPaternal ? 'bg-blue-100 text-blue-800 border-blue-300' : 'bg-rose-100 text-rose-800 border-rose-300'
             }`}
           >
@@ -437,7 +437,7 @@ export const ChromosomeSVG: React.FC<ChromosomeSVGProps> = ({
           x2={cx - w * 0.1}
           y2={cy - h * 0.22}
           stroke={lightColor}
-          strokeWidth={2}
+          strokeWidth={2.5}
           strokeLinecap="round"
         />
         <line
@@ -446,7 +446,7 @@ export const ChromosomeSVG: React.FC<ChromosomeSVGProps> = ({
           x2={cx + w * 0.28}
           y2={cy - h * 0.28}
           stroke={lightColor}
-          strokeWidth={2}
+          strokeWidth={2.5}
           strokeLinecap="round"
         />
 
@@ -478,7 +478,7 @@ export const ChromosomeSVG: React.FC<ChromosomeSVGProps> = ({
 
       {showLabel && (
         <span
-          className={`absolute -bottom-4 text-[10px] font-black px-1.5 py-0.2 rounded-full border shadow-xs whitespace-nowrap ${
+          className={`absolute -bottom-5 text-xs font-black px-2 py-0.5 rounded-full border shadow-xs whitespace-nowrap ${
             isPaternal
               ? 'bg-blue-50 text-blue-700 border-blue-300'
               : 'bg-rose-50 text-rose-700 border-rose-300'

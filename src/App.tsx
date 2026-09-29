@@ -95,7 +95,7 @@ export default function App() {
   const stepInfo = STEP_INFOS[currentStep];
 
   return (
-    <div className="flex flex-col h-screen w-screen bg-sky-50 overflow-hidden font-sans text-slate-800 antialiased select-none">
+    <div className="flex flex-col min-h-screen w-full bg-sky-50 overflow-x-hidden font-sans text-slate-800 antialiased select-none">
       {/* Top Header */}
       <Header
         currentStep={currentStep}
@@ -111,7 +111,7 @@ export default function App() {
       {/* Instruction Banner Bar - Vibrant Cyan Theme */}
       <div
         id="instruction-bar"
-        className="bg-cyan-100 border-b-4 border-cyan-200 py-2.5 sm:py-3 px-4 sm:px-6 text-center shadow-inner flex items-center justify-center gap-2 sm:gap-3"
+        className="bg-cyan-100 border-b-4 border-cyan-200 py-2.5 sm:py-3 px-4 sm:px-6 text-center shadow-inner flex items-center justify-center gap-2 sm:gap-3 shrink-0"
       >
         <span className="bg-cyan-500 text-white px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-lg font-black text-xs sm:text-sm tracking-wide shadow-xs shrink-0">
           STEP 0{currentStep}
@@ -121,8 +121,8 @@ export default function App() {
         </span>
       </div>
 
-      {/* Main Interactive Workspace Area with 40px rounded corners and sky-100 border */}
-      <main className="flex-1 relative bg-white m-2 sm:m-5 rounded-[24px] sm:rounded-[40px] border-4 sm:border-8 border-sky-100 shadow-2xl overflow-hidden flex flex-col">
+      {/* Main Interactive Workspace Area optimized for 16:10 tablet viewport */}
+      <main className="flex-1 relative bg-white my-2 sm:my-3 mx-2 sm:mx-auto rounded-[24px] sm:rounded-[36px] border-4 sm:border-6 border-sky-100 shadow-xl overflow-hidden flex flex-col min-h-[600px] sm:min-h-[640px] max-w-6xl w-[calc(100%-1rem)] sm:w-[calc(100%-2rem)]">
         {currentStep === 1 && (
           <Step1Prophase
             key={`step1-${stepKey}`}

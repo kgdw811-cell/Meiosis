@@ -46,13 +46,13 @@ export const Step3Meiosis2: React.FC<Step3Meiosis2Props> = ({ onComplete, showTo
     [0, 1].forEach((cellIdx) => {
       const cellRef = cellIdx === 0 ? cell0Ref.current : cell1Ref.current;
       const rect = cellRef?.getBoundingClientRect();
-      const cellW = rect?.width || 340;
-      const cellH = rect?.height || 420;
+      const cellW = rect?.width || 380;
+      const cellH = Math.max(520, rect?.height || 560);
       const origin: OriginType = cellIdx === 0 ? 'paternal' : 'maternal';
 
       PAIR_SIZES.forEach((size, idx) => {
-        const armW = Math.max(34, size.w * 1.15);
-        const chrArmH = Math.max(22, size.h * 0.5);
+        const armW = Math.max(46, size.w * 1.2);
+        const chrArmH = Math.max(44, size.h * 0.72);
         const colX = (idx + 0.5) * (cellW / PAIR_SIZES.length) - armW / 2;
         const centerY = cellH * 0.5;
 
@@ -65,7 +65,7 @@ export const Step3Meiosis2: React.FC<Step3Meiosis2Props> = ({ onComplete, showTo
           size,
           targetPole: 'upper',
           x: colX,
-          y: centerY - chrArmH - 8,
+          y: centerY - chrArmH - 10,
           isSplit: false,
           pole: undefined
         });
@@ -79,7 +79,7 @@ export const Step3Meiosis2: React.FC<Step3Meiosis2Props> = ({ onComplete, showTo
           size,
           targetPole: 'lower',
           x: colX,
-          y: centerY + 8,
+          y: centerY + 10,
           isSplit: false,
           pole: undefined
         });
@@ -145,12 +145,12 @@ export const Step3Meiosis2: React.FC<Step3Meiosis2Props> = ({ onComplete, showTo
       const dx = e.clientX - dragInfo.current.startX;
 
       const cellRef = dragInfo.current.cellIndex === 0 ? cell0Ref.current : cell1Ref.current;
-      const cellH = cellRef?.getBoundingClientRect().height || 420;
-      const cellW = cellRef?.getBoundingClientRect().width || 340;
+      const cellH = Math.max(520, cellRef?.getBoundingClientRect().height || 560);
+      const cellW = cellRef?.getBoundingClientRect().width || 380;
 
       // Allow natural vertical dragging with slight horizontal flexibility
-      const newX = Math.max(10, Math.min(cellW - 50, dragInfo.current.origX + dx * 0.6));
-      const newY = Math.max(10, Math.min(cellH - 60, dragInfo.current.origY + dy));
+      const newX = Math.max(10, Math.min(cellW - 55, dragInfo.current.origX + dx * 0.6));
+      const newY = Math.max(10, Math.min(cellH - 65, dragInfo.current.origY + dy));
 
       setChromatids((prev) =>
         prev.map((c) => (c.id === dragInfo.current.id ? { ...c, x: newX, y: newY } : c))
@@ -169,15 +169,15 @@ export const Step3Meiosis2: React.FC<Step3Meiosis2Props> = ({ onComplete, showTo
       setActiveDraggingId(null);
 
       const cellRef = cellIdx === 0 ? cell0Ref.current : cell1Ref.current;
-      const cellH = cellRef?.getBoundingClientRect().height || 420;
-      const cellW = cellRef?.getBoundingClientRect().width || 340;
+      const cellH = Math.max(520, cellRef?.getBoundingClientRect().height || 560);
+      const cellW = cellRef?.getBoundingClientRect().width || 380;
       const centerY = cellH * 0.5;
 
       const dragged = chromatids.find((c) => c.id === draggedId);
       if (!dragged) return;
 
-      const armW = Math.max(34, dragged.size.w * 1.15);
-      const chrArmH = Math.max(22, dragged.size.h * 0.5);
+      const armW = Math.max(46, dragged.size.w * 1.2);
+      const chrArmH = Math.max(44, dragged.size.h * 0.72);
       const defaultColX = (dragged.pairId - 0.5) * (cellW / PAIR_SIZES.length) - armW / 2;
 
       // If user clicked without dragging, guide them to drag
@@ -187,8 +187,6 @@ export const Step3Meiosis2: React.FC<Step3Meiosis2Props> = ({ onComplete, showTo
       }
 
       // Check if dragged to destination pole zone:
-      // Upper zone: top 38% of cell
-      // Lower zone: bottom 38% of cell
       const isUpperZone = dragged.y < cellH * 0.38;
       const isLowerZone = dragged.y > cellH * 0.56;
 
@@ -197,14 +195,14 @@ export const Step3Meiosis2: React.FC<Step3Meiosis2Props> = ({ onComplete, showTo
 
       if (dragged.targetPole === 'upper' && isUpperZone) {
         targetAssigned = 'upper';
-        targetY = cellH * 0.16 + (dragged.pairId % 2 === 0 ? -4 : 6);
+        targetY = cellH * 0.14 + (dragged.pairId % 2 === 0 ? -4 : 6);
       } else if (dragged.targetPole === 'lower' && isLowerZone) {
         targetAssigned = 'lower';
-        targetY = cellH * 0.72 + (dragged.pairId % 2 === 0 ? 6 : -4);
+        targetY = cellH * 0.74 + (dragged.pairId % 2 === 0 ? 6 : -4);
       } else {
         // Did not reach the pole zone - snap back to equator resting position
         sound.playSnap();
-        const restY = dragged.targetPole === 'upper' ? centerY - chrArmH - 8 : centerY + 8;
+        const restY = dragged.targetPole === 'upper' ? centerY - chrArmH - 10 : centerY + 10;
         showToast(`💡 ${dragged.size.name} 자매염색분체를 ${dragged.targetPole === 'upper' ? '위쪽 극' : '아래쪽 극'}까지 끝까지 드래그하세요!`);
 
         setChromatids((prev) =>
@@ -247,11 +245,11 @@ export const Step3Meiosis2: React.FC<Step3Meiosis2Props> = ({ onComplete, showTo
     sound.playSuccess();
     const updated = chromatids.map((c) => {
       const cellRef = c.cellIndex === 0 ? cell0Ref.current : cell1Ref.current;
-      const cellH = cellRef?.getBoundingClientRect().height || 420;
+      const cellH = Math.max(520, cellRef?.getBoundingClientRect().height || 560);
       const targetY =
         c.targetPole === 'upper'
-          ? cellH * 0.16 + (c.pairId % 2 === 0 ? -4 : 6)
-          : cellH * 0.72 + (c.pairId % 2 === 0 ? 6 : -4);
+          ? cellH * 0.14 + (c.pairId % 2 === 0 ? -4 : 6)
+          : cellH * 0.74 + (c.pairId % 2 === 0 ? 6 : -4);
 
       return {
         ...c,
@@ -270,32 +268,33 @@ export const Step3Meiosis2: React.FC<Step3Meiosis2Props> = ({ onComplete, showTo
   const splitCount = Math.floor(chromatids.filter((c) => c.isSplit).length / 2);
 
   return (
-    <div className="relative w-full h-full bg-slate-900/5 select-none overflow-hidden touch-none flex flex-col p-2 sm:p-4">
-      {/* Top Floating Helper Controls */}
-      <div className="relative z-20 px-2 flex flex-wrap items-center justify-between gap-2 pointer-events-auto mb-2">
-        <div className="bg-indigo-900 text-white border-2 border-indigo-700 px-4 py-1.5 rounded-2xl shadow-md flex items-center gap-2.5">
+    <div className="relative w-full flex-1 flex flex-col p-2 sm:p-4 select-none touch-pan-y overflow-hidden">
+      {/* 1. Top Control Bar: Status on Left, Auto Separate on Top-Right */}
+      <div className="w-full flex items-center justify-between gap-3 mb-2 px-2 z-20 shrink-0">
+        <div className="bg-indigo-900 text-white border-2 border-indigo-700 px-4 py-2 rounded-2xl shadow-md flex items-center gap-3">
           <ArrowUpDown className="w-4 h-4 text-cyan-300 animate-bounce" />
-          <span className="text-xs font-bold text-indigo-100">
-            동원체 분리: <span className="text-amber-300 text-sm font-black">{splitCount}</span> / 6 쌍
+          <span className="text-xs sm:text-sm font-bold text-indigo-100">
+            동원체 분리: <span className="text-amber-300 text-sm sm:text-base font-black">{splitCount}</span> / 6 쌍
             <span className="mx-2 text-indigo-400">|</span>
-            극 이동: <span className="text-cyan-300 text-sm font-black">{separatedCount}</span> / 12 개
+            극 이동: <span className="text-cyan-300 text-sm sm:text-base font-black">{separatedCount}</span> / 12 개
           </span>
-          <span className="text-[11px] text-cyan-200 hidden sm:inline font-semibold">
+          <span className="text-xs text-cyan-200 hidden sm:inline font-semibold">
             (염색체 클릭 ➔ 동원체 분리 후 각각 위/아래로 드래그)
           </span>
         </div>
 
+        {/* Top-Right Action Button */}
         <button
           onClick={handleAutoSeparate}
-          className="bg-cyan-50 hover:bg-cyan-100 text-cyan-800 border-2 border-cyan-300 text-xs font-bold px-3.5 py-1.5 rounded-xl shadow-xs flex items-center gap-1.5 cursor-pointer transition-transform hover:scale-105 active:scale-95"
+          className="bg-cyan-50 hover:bg-cyan-100 text-cyan-800 border-2 border-cyan-300 text-xs sm:text-sm font-bold px-4 py-2 rounded-xl shadow-xs flex items-center gap-2 cursor-pointer transition-transform hover:scale-105 active:scale-95"
         >
-          <Wand2 className="w-3.5 h-3.5 text-cyan-600" />
+          <Wand2 className="w-4 h-4 text-cyan-600" />
           <span>자동 전체 분리</span>
         </button>
       </div>
 
-      {/* Main Split Stages (2 Daughter cells -> 4 Gamete cells) */}
-      <div className="relative flex-1 grid grid-cols-2 gap-3 sm:gap-6 items-stretch">
+      {/* 2. Main Split Stages (2 Daughter cells -> 4 Gamete cells): Underneath top bar with NO overlap */}
+      <div className="relative flex-1 grid grid-cols-2 gap-3 sm:gap-6 items-stretch min-h-[500px] sm:min-h-[540px]">
         {[0, 1].map((cellIdx) => {
           const cellChromatids = chromatids.filter((c) => c.cellIndex === cellIdx);
           const isCellFullySplit = cellChromatids.length > 0 && cellChromatids.every((c) => c.pole !== undefined);
@@ -308,7 +307,7 @@ export const Step3Meiosis2: React.FC<Step3Meiosis2Props> = ({ onComplete, showTo
             <div
               key={`cell-container-${cellIdx}`}
               ref={cellRef}
-              className={`relative rounded-[28px] sm:rounded-[36px] border-4 border-dashed transition-all duration-500 p-3 sm:p-4 flex flex-col justify-between overflow-hidden shadow-inner touch-none select-none ${
+              className={`relative rounded-[28px] sm:rounded-[40px] border-4 border-dashed transition-all duration-500 p-3 sm:p-5 flex flex-col justify-between overflow-hidden shadow-inner select-none min-h-[500px] sm:min-h-[540px] ${
                 isCellFullySplit
                   ? 'border-emerald-400 bg-emerald-50/50'
                   : 'border-sky-300 bg-white/90'
@@ -317,7 +316,7 @@ export const Step3Meiosis2: React.FC<Step3Meiosis2Props> = ({ onComplete, showTo
               {/* Cell Header Badge */}
               <div className="flex items-center justify-between z-10 pointer-events-none">
                 <span
-                  className={`text-xs font-black px-3 py-1 rounded-full border shadow-xs ${
+                  className={`text-xs sm:text-sm font-black px-3.5 py-1.5 rounded-full border shadow-xs ${
                     cellIdx === 0
                       ? 'bg-blue-100 text-blue-800 border-blue-300'
                       : 'bg-rose-100 text-rose-800 border-rose-300'
@@ -325,22 +324,22 @@ export const Step3Meiosis2: React.FC<Step3Meiosis2Props> = ({ onComplete, showTo
                 >
                   딸세포 {cellIdx + 1} ({cellIdx === 0 ? '부계' : '모계'} n = 3)
                 </span>
-                <span className="text-[11px] font-bold text-indigo-900 bg-white/80 px-2.5 py-0.5 rounded-full border border-indigo-100 shadow-xs">
+                <span className="text-xs font-bold text-indigo-900 bg-white/90 px-3 py-1 rounded-full border border-indigo-100 shadow-xs">
                   {isCellFullySplit ? '2개 생식세포 형성 완료' : '중기 II → 후기 II (클릭 분리 ➔ 드래그)'}
                 </span>
               </div>
 
               {/* Active Drag Drop Target Zone Highlights */}
               {isDraggingUpperHere && (
-                <div className="absolute inset-x-3 top-10 h-28 border-2 border-dashed border-cyan-400 bg-cyan-100/40 rounded-2xl flex items-center justify-center pointer-events-none z-10 animate-pulse">
-                  <span className="text-xs font-bold text-cyan-900 bg-white/90 px-3 py-1 rounded-full shadow-xs border border-cyan-300">
+                <div className="absolute inset-x-3 sm:inset-x-5 top-11 h-32 border-2 border-dashed border-cyan-400 bg-cyan-100/40 rounded-2xl flex items-center justify-center pointer-events-none z-10 animate-pulse">
+                  <span className="text-xs sm:text-sm font-black text-cyan-900 bg-white/95 px-4 py-1.5 rounded-full shadow-md border border-cyan-300">
                     ⬆ 위쪽 극 (여기로 드래그하세요)
                   </span>
                 </div>
               )}
               {isDraggingLowerHere && (
-                <div className="absolute inset-x-3 bottom-10 h-28 border-2 border-dashed border-rose-400 bg-rose-100/40 rounded-2xl flex items-center justify-center pointer-events-none z-10 animate-pulse">
-                  <span className="text-xs font-bold text-rose-900 bg-white/90 px-3 py-1 rounded-full shadow-xs border border-rose-300">
+                <div className="absolute inset-x-3 sm:inset-x-5 bottom-11 h-32 border-2 border-dashed border-rose-400 bg-rose-100/40 rounded-2xl flex items-center justify-center pointer-events-none z-10 animate-pulse">
+                  <span className="text-xs sm:text-sm font-black text-rose-900 bg-white/95 px-4 py-1.5 rounded-full shadow-md border border-rose-300">
                     ⬇ 아래쪽 극 (여기로 드래그하세요)
                   </span>
                 </div>
@@ -349,7 +348,7 @@ export const Step3Meiosis2: React.FC<Step3Meiosis2Props> = ({ onComplete, showTo
               {/* Cleavage line if split */}
               {isCellFullySplit && (
                 <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 border-t-2 border-dashed border-emerald-400 opacity-80 z-0 flex justify-center pointer-events-none">
-                  <span className="text-[11px] font-bold text-emerald-800 bg-emerald-100 px-3 py-0.5 rounded-full -mt-2.5 border border-emerald-300 shadow-xs">
+                  <span className="text-xs font-bold text-emerald-800 bg-emerald-100 px-3.5 py-1 rounded-full -mt-3.5 border border-emerald-300 shadow-xs">
                     세포질 분열 완료 (생식세포 2개 생성)
                   </span>
                 </div>
@@ -357,8 +356,8 @@ export const Step3Meiosis2: React.FC<Step3Meiosis2Props> = ({ onComplete, showTo
 
               {/* Center Equatorial Plane Indicator (When not fully split) */}
               {!isCellFullySplit && (
-                <div className="absolute inset-x-2 top-1/2 -translate-y-1/2 h-12 border-y-2 border-dashed border-sky-300/80 bg-sky-50/40 rounded-xl pointer-events-none z-0 flex items-center justify-center">
-                  <span className="text-[10px] font-bold text-sky-700/70 bg-white/80 px-2.5 py-0.5 rounded-full">
+                <div className="absolute inset-x-3 top-1/2 -translate-y-1/2 h-14 border-y-2 border-dashed border-sky-300/80 bg-sky-50/40 rounded-2xl pointer-events-none z-0 flex items-center justify-center">
+                  <span className="text-xs font-black text-sky-700/80 bg-white/90 px-3 py-1 rounded-full shadow-xs">
                     적도판 (동원체 결합면)
                   </span>
                 </div>
@@ -372,9 +371,9 @@ export const Step3Meiosis2: React.FC<Step3Meiosis2Props> = ({ onComplete, showTo
                   const w = rect.width;
                   const h = rect.height;
                   const upperPoleX = w * 0.5;
-                  const upperPoleY = 24;
+                  const upperPoleY = 32;
                   const lowerPoleX = w * 0.5;
-                  const lowerPoleY = h - 24;
+                  const lowerPoleY = h - 32;
                   const centerY = h * 0.5;
 
                   return (
@@ -388,8 +387,8 @@ export const Step3Meiosis2: React.FC<Step3Meiosis2Props> = ({ onComplete, showTo
                         );
                         if (!upper || !lower) return null;
 
-                        const armW = Math.max(34, size.w * 1.15);
-                        const chrArmH = Math.max(22, size.h * 0.5);
+                        const armW = Math.max(46, size.w * 1.2);
+                        const chrArmH = Math.max(44, size.h * 0.72);
 
                         const isPairSplit = upper.isSplit && lower.isSplit;
 
@@ -407,7 +406,7 @@ export const Step3Meiosis2: React.FC<Step3Meiosis2Props> = ({ onComplete, showTo
                                 x2={cx}
                                 y2={cy}
                                 stroke="#94a3b8"
-                                strokeWidth={2.2}
+                                strokeWidth={2.4}
                                 strokeDasharray="5,3.5"
                                 strokeLinecap="round"
                                 opacity={0.85}
@@ -419,7 +418,7 @@ export const Step3Meiosis2: React.FC<Step3Meiosis2Props> = ({ onComplete, showTo
                                 x2={cx}
                                 y2={cy}
                                 stroke="#94a3b8"
-                                strokeWidth={2.2}
+                                strokeWidth={2.4}
                                 strokeDasharray="5,3.5"
                                 strokeLinecap="round"
                                 opacity={0.85}
@@ -428,14 +427,14 @@ export const Step3Meiosis2: React.FC<Step3Meiosis2Props> = ({ onComplete, showTo
                           );
                         }
 
-                        // Split: Upper spindle fiber meets upper chromatid apex (upper.y + 5)
+                        // Split: Upper spindle fiber meets upper chromatid apex (upper.y + 6)
                         const upperCentromereX = upper.x + armW / 2;
-                        const upperCentromereY = upper.y + 5;
+                        const upperCentromereY = upper.y + 6;
                         const isUpperDragging = activeDraggingId === upper.id;
 
-                        // Lower spindle fiber meets lower chromatid apex (lower.y + chrArmH - 5)
+                        // Lower spindle fiber meets lower chromatid apex (lower.y + chrArmH - 6)
                         const lowerCentromereX = lower.x + armW / 2;
-                        const lowerCentromereY = lower.y + chrArmH - 5;
+                        const lowerCentromereY = lower.y + chrArmH - 6;
                         const isLowerDragging = activeDraggingId === lower.id;
 
                         return (
@@ -447,7 +446,7 @@ export const Step3Meiosis2: React.FC<Step3Meiosis2Props> = ({ onComplete, showTo
                               x2={upperCentromereX}
                               y2={upperCentromereY}
                               stroke="#94a3b8"
-                              strokeWidth={isUpperDragging ? 3.0 : 2.2}
+                              strokeWidth={isUpperDragging ? 3.2 : 2.4}
                               strokeDasharray="5,3.5"
                               strokeLinecap="round"
                               opacity={isUpperDragging ? 1.0 : upper.pole ? 0.95 : 0.85}
@@ -460,7 +459,7 @@ export const Step3Meiosis2: React.FC<Step3Meiosis2Props> = ({ onComplete, showTo
                               x2={lowerCentromereX}
                               y2={lowerCentromereY}
                               stroke="#94a3b8"
-                              strokeWidth={isLowerDragging ? 3.0 : 2.2}
+                              strokeWidth={isLowerDragging ? 3.2 : 2.4}
                               strokeDasharray="5,3.5"
                               strokeLinecap="round"
                               opacity={isLowerDragging ? 1.0 : lower.pole ? 0.95 : 0.85}
@@ -484,16 +483,16 @@ export const Step3Meiosis2: React.FC<Step3Meiosis2Props> = ({ onComplete, showTo
                   );
                   if (!upper || !lower) return null;
 
-                  const armW = Math.max(34, size.w * 1.15);
-                  const armH = Math.max(28, size.h * 0.65);
-                  const chrArmH = Math.max(22, size.h * 0.5);
+                  const armW = Math.max(46, size.w * 1.2);
+                  const armH = Math.max(54, size.h * 0.88);
+                  const chrArmH = Math.max(44, size.h * 0.72);
 
                   const isPairSplit = upper.isSplit && lower.isSplit;
 
                   // 1) BEFORE CLICK: Unified Horizontal X Chromosome on equatorial plate
                   if (!isPairSplit) {
                     const rect = cellRef.current?.getBoundingClientRect();
-                    const cellH = rect?.height || 420;
+                    const cellH = Math.max(680, rect?.height || 720);
                     const centerY = cellH * 0.5;
 
                     return (
@@ -515,7 +514,7 @@ export const Step3Meiosis2: React.FC<Step3Meiosis2Props> = ({ onComplete, showTo
                         title={`${size.name} 염색체 - 클릭하여 동원체를 분리하세요!`}
                       >
                         {/* Interactive Click-to-Split Badge */}
-                        <span className="absolute -top-7 text-[10px] font-black text-amber-900 bg-amber-300 border-2 border-amber-400 px-2.5 py-0.5 rounded-full shadow-md animate-bounce whitespace-nowrap z-40">
+                        <span className="absolute -top-8 text-xs font-black text-amber-900 bg-amber-300 border-2 border-amber-400 px-3 py-1 rounded-full shadow-md animate-bounce whitespace-nowrap z-40">
                           👆 클릭하여 분리
                         </span>
 
@@ -559,7 +558,7 @@ export const Step3Meiosis2: React.FC<Step3Meiosis2Props> = ({ onComplete, showTo
                         }
                       >
                         {!upper.pole && (
-                          <span className="absolute -top-6 text-[9px] font-black text-cyan-900 bg-cyan-200 border border-cyan-400 px-2 py-0.2 rounded-full shadow-xs whitespace-nowrap animate-pulse pointer-events-none">
+                          <span className="absolute -top-7 text-[11px] font-black text-cyan-900 bg-cyan-200 border border-cyan-400 px-2.5 py-0.5 rounded-full shadow-xs whitespace-nowrap animate-pulse pointer-events-none">
                             위로 드래그 ⬆
                           </span>
                         )}
@@ -596,7 +595,7 @@ export const Step3Meiosis2: React.FC<Step3Meiosis2Props> = ({ onComplete, showTo
                         }
                       >
                         {!lower.pole && (
-                          <span className="absolute -bottom-6 text-[9px] font-black text-rose-900 bg-rose-200 border border-rose-400 px-2 py-0.2 rounded-full shadow-xs whitespace-nowrap animate-pulse pointer-events-none">
+                          <span className="absolute -bottom-7 text-[11px] font-black text-rose-900 bg-rose-200 border border-rose-400 px-2.5 py-0.5 rounded-full shadow-xs whitespace-nowrap animate-pulse pointer-events-none">
                             아래로 드래그 ⬇
                           </span>
                         )}
