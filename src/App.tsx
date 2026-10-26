@@ -22,6 +22,25 @@ export default function App() {
 
   const [stepKey, setStepKey] = useState<number>(0);
   const toastTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const autoAdvanceTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const currentStepRef = useRef<SimStep>(currentStep);
+
+  useEffect(() => {
+    currentStepRef.current = currentStep;
+  }, [currentStep]);
+
+  const clearAutoAdvance = () => {
+    if (autoAdvanceTimerRef.current) {
+      clearTimeout(autoAdvanceTimerRef.current);
+      autoAdvanceTimerRef.current = null;
+    }
+  };
+
+  useEffect(() => {
+    return () => {
+      clearAutoAdvance();
+    };
+  }, []);
 
   const showToast = (msg: string) => {
     setToast(msg);
@@ -41,29 +60,28 @@ export default function App() {
   };
 
   const handleResetCurrentStep = () => {
+    clearAutoAdvance();
     setCanNext(false);
     setStepKey((prev) => prev + 1);
     showToast('현재 단계를 초기화했습니다.');
   };
 
-  const handleStepComplete = () => {
-    setCanNext(true);
-  };
-
   const handleNext = () => {
-    if (currentStep === 1) {
+    clearAutoAdvance();
+    const step = currentStepRef.current;
+    if (step === 1) {
       setCurrentStep(2);
       setCanNext(false);
       setStepKey((prev) => prev + 1);
-    } else if (currentStep === 2) {
+    } else if (step === 2) {
       // Trigger concept quiz modal (Step 2: 감수 1분열 핵심 개념) before going to Step 3
       setQuizStep(2);
       setIsQuizOpen(true);
-    } else if (currentStep === 3) {
+    } else if (step === 3) {
       // Trigger concept quiz modal (Step 3: 감수 2분열 핵심 개념) before going to Step 4
       setQuizStep(3);
       setIsQuizOpen(true);
-    } else if (currentStep === 4) {
+    } else if (step === 4) {
       // Restart from step 1
       setCurrentStep(1);
       setCanNext(false);
@@ -71,7 +89,17 @@ export default function App() {
     }
   };
 
+  const handleStepComplete = () => {
+    setCanNext(true);
+    clearAutoAdvance();
+    // Automatically transition to the next step / quiz after a comfortable pause
+    autoAdvanceTimerRef.current = setTimeout(() => {
+      handleNext();
+    }, 1700);
+  };
+
   const handleQuizPass = () => {
+    clearAutoAdvance();
     setIsQuizOpen(false);
     if (quizStep === 2) {
       setCurrentStep(3);
@@ -87,6 +115,7 @@ export default function App() {
   };
 
   const handleSelectStep = (step: SimStep) => {
+    clearAutoAdvance();
     setCurrentStep(step);
     setCanNext(step === 4);
     setStepKey((prev) => prev + 1);

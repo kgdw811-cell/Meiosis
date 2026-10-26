@@ -138,7 +138,7 @@ export const Step2Anaphase1: React.FC<Step2Anaphase1Props> = ({ onComplete, show
       if (newCount === 6) {
         sound.playSuccess();
         onComplete();
-        showToast('🎉 상동염색체가 모두 양극으로 분리되었습니다! [개념 퀴즈]로 이동하세요.');
+        showToast('🎉 상동염색체 양극 분리 완료! 잠시 후 개념 퀴즈로 자동 이동합니다.');
       }
     }
   };
@@ -169,7 +169,7 @@ export const Step2Anaphase1: React.FC<Step2Anaphase1Props> = ({ onComplete, show
     setChromosomes(updated);
     setSeparatedCount(6);
     onComplete();
-    showToast('상동염색체 3쌍이 양극으로 완벽히 분리되었습니다!');
+    showToast('🎉 상동염색체 3쌍 분리 완료! 잠시 후 개념 퀴즈로 자동 이동합니다.');
   };
 
   return (
@@ -364,7 +364,7 @@ export const Step2Anaphase1: React.FC<Step2Anaphase1Props> = ({ onComplete, show
               <CheckCircle2 className="w-6 h-6 text-indigo-100" />
               <div>
                 <div className="font-bold text-sm">상동염색체 분리 완료! (1분열 완료)</div>
-                <div className="text-xs text-indigo-100">각 극으로 3개씩 이동: 2n=6 → n=3 반감</div>
+                <div className="text-xs text-indigo-100">각 극으로 3개씩 이동: 2n=6 → n=3 반감 · 잠시 후 퀴즈로 자동 이동합니다</div>
               </div>
             </div>
           )}

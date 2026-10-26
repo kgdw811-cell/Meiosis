@@ -227,7 +227,7 @@ export const Step3Meiosis2: React.FC<Step3Meiosis2Props> = ({ onComplete, showTo
         if (newCount === 12) {
           sound.playSuccess();
           onComplete();
-          showToast('🎉 감수 2분열 완료! 총 4개의 생식세포 딸세포(n=3)가 형성되었습니다.');
+          showToast('🎉 감수 2분열 완료! 총 4개의 딸세포 형성. 잠시 후 퀴즈로 자동 이동합니다.');
         }
       }
     };
@@ -261,7 +261,7 @@ export const Step3Meiosis2: React.FC<Step3Meiosis2Props> = ({ onComplete, showTo
     setChromatids(updated);
     setSeparatedCount(12);
     onComplete();
-    showToast('모든 염색체의 동원체가 분리되고 양극으로 이동 완료되었습니다!');
+    showToast('🎉 동원체 분리 및 양극 이동 완료! 잠시 후 퀴즈로 자동 이동합니다.');
   };
 
   const splitCount = Math.floor(chromatids.filter((c) => c.isSplit).length / 2);
@@ -623,12 +623,12 @@ export const Step3Meiosis2: React.FC<Step3Meiosis2Props> = ({ onComplete, showTo
                 감수 2분열 완료! 최종 4개의 생식세포 딸세포 형성
               </div>
               <div className="text-xs text-emerald-100 font-medium">
-                각 생식세포 염색체 수: n = 3 (염색분체 3개)
+                각 생식세포 염색체 수: n = 3 (염색분체 3개) · 잠시 후 퀴즈로 자동 이동합니다
               </div>
             </div>
           </div>
           <span className="text-xs bg-indigo-900 text-cyan-300 px-3 py-1.5 rounded-xl font-black shadow-xs">
-            상단 [개념 퀴즈 ➔] 버튼 클릭
+            자동 이동 중 (또는 퀴즈 클릭)
           </span>
         </div>
       )}

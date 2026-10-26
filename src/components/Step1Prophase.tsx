@@ -249,7 +249,7 @@ export const Step1Prophase: React.FC<Step1ProphaseProps> = ({ onComplete, showTo
       if (newlyPairedCount === PAIR_SIZES.length) {
         sound.playSuccess();
         onComplete();
-        showToast('🌟 모든 2가 염색체(3쌍)가 완성되었습니다! 상단의 [다음 단계]를 누르세요.');
+        showToast('🌟 모든 2가 염색체(3쌍) 접합 완료! 잠시 후 다음 단계로 자동 이동합니다.');
       }
     }
   };
@@ -277,7 +277,7 @@ export const Step1Prophase: React.FC<Step1ProphaseProps> = ({ onComplete, showTo
     setChromosomes(updated);
     setPairedCount(PAIR_SIZES.length);
     onComplete();
-    showToast('모든 상동염색체가 접합하여 2가 염색체 3쌍이 정렬되었습니다!');
+    showToast('🌟 모든 상동염색체 접합 완료! 잠시 후 다음 단계로 자동 이동합니다.');
   };
 
   return (
