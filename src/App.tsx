@@ -13,7 +13,7 @@ import { Info } from 'lucide-react';
 
 export default function App() {
   const [currentStep, setCurrentStep] = useState<SimStep>(1);
-  const [canNext, setCanNext] = useState<boolean>(false);
+  const [isTransitioning, setIsTransitioning] = useState<boolean>(false);
   const [isQuizOpen, setIsQuizOpen] = useState<boolean>(false);
   const [quizStep, setQuizStep] = useState<2 | 3>(2);
   const [isGuideOpen, setIsGuideOpen] = useState<boolean>(false);
@@ -61,64 +61,54 @@ export default function App() {
 
   const handleResetCurrentStep = () => {
     clearAutoAdvance();
-    setCanNext(false);
     setStepKey((prev) => prev + 1);
     showToast('현재 단계를 초기화했습니다.');
   };
 
-  const handleNext = () => {
+  const transitionToStep = (nextStep: SimStep, toastMsg?: string) => {
     clearAutoAdvance();
-    const step = currentStepRef.current;
-    if (step === 1) {
-      setCurrentStep(2);
-      setCanNext(false);
+    setIsTransitioning(true);
+    setTimeout(() => {
+      setCurrentStep(nextStep);
       setStepKey((prev) => prev + 1);
-    } else if (step === 2) {
-      // Trigger concept quiz modal (Step 2: 감수 1분열 핵심 개념) before going to Step 3
-      setQuizStep(2);
-      setIsQuizOpen(true);
-    } else if (step === 3) {
-      // Trigger concept quiz modal (Step 3: 감수 2분열 핵심 개념) before going to Step 4
-      setQuizStep(3);
-      setIsQuizOpen(true);
-    } else if (step === 4) {
-      // Restart from step 1
-      setCurrentStep(1);
-      setCanNext(false);
-      setStepKey((prev) => prev + 1);
-    }
+      setIsTransitioning(false);
+      if (toastMsg) showToast(toastMsg);
+    }, 240);
   };
 
   const handleStepComplete = () => {
-    setCanNext(true);
     clearAutoAdvance();
-    // Automatically transition to the next step / quiz after a comfortable pause
-    autoAdvanceTimerRef.current = setTimeout(() => {
-      handleNext();
-    }, 1700);
+    const step = currentStepRef.current;
+    if (step === 1) {
+      autoAdvanceTimerRef.current = setTimeout(() => {
+        transitionToStep(2, '💡 1단계 완료! 감수 1분열(상동 분리) 단계로 진행합니다.');
+      }, 1700);
+    } else if (step === 2) {
+      autoAdvanceTimerRef.current = setTimeout(() => {
+        setQuizStep(2);
+        setIsQuizOpen(true);
+      }, 1700);
+    } else if (step === 3) {
+      autoAdvanceTimerRef.current = setTimeout(() => {
+        setQuizStep(3);
+        setIsQuizOpen(true);
+      }, 1700);
+    }
   };
 
   const handleQuizPass = () => {
     clearAutoAdvance();
     setIsQuizOpen(false);
     if (quizStep === 2) {
-      setCurrentStep(3);
-      setCanNext(false);
-      setStepKey((prev) => prev + 1);
-      showToast('💡 1분열 퀴즈 통과! 감수 2분열(염색분체 분리) 단계로 진행합니다.');
+      transitionToStep(3, '💡 1분열 퀴즈 통과! 감수 2분열(염색분체 분리) 단계로 진행합니다.');
     } else {
-      setCurrentStep(4);
-      setCanNext(true);
-      setStepKey((prev) => prev + 1);
-      showToast('💡 2분열 퀴즈 통과! 최종 감수분열 탐구 결과 리포트로 이동합니다.');
+      transitionToStep(4, '💡 2분열 퀴즈 통과! 최종 감수분열 탐구 결과 리포트로 이동합니다.');
     }
   };
 
   const handleSelectStep = (step: SimStep) => {
-    clearAutoAdvance();
-    setCurrentStep(step);
-    setCanNext(step === 4);
-    setStepKey((prev) => prev + 1);
+    if (step === currentStep && !isTransitioning) return;
+    transitionToStep(step);
   };
 
   const stepInfo = STEP_INFOS[currentStep];
@@ -129,10 +119,8 @@ export default function App() {
       <Header
         currentStep={currentStep}
         soundEnabled={soundEnabled}
-        canNext={canNext}
         onToggleSound={handleToggleSound}
         onReset={handleResetCurrentStep}
-        onNext={handleNext}
         onOpenGuide={() => setIsGuideOpen(true)}
         onSelectStep={handleSelectStep}
       />
@@ -152,34 +140,40 @@ export default function App() {
 
       {/* Main Interactive Workspace Area optimized for 16:10 tablet viewport */}
       <main className="flex-1 relative bg-white my-2 sm:my-3 mx-2 sm:mx-auto rounded-[24px] sm:rounded-[36px] border-4 sm:border-6 border-sky-100 shadow-xl overflow-hidden flex flex-col min-h-[600px] sm:min-h-[640px] max-w-6xl w-[calc(100%-1rem)] sm:w-[calc(100%-2rem)]">
-        {currentStep === 1 && (
-          <Step1Prophase
-            key={`step1-${stepKey}`}
-            onComplete={handleStepComplete}
-            showToast={showToast}
-          />
-        )}
-        {currentStep === 2 && (
-          <Step2Anaphase1
-            key={`step2-${stepKey}`}
-            onComplete={handleStepComplete}
-            showToast={showToast}
-          />
-        )}
-        {currentStep === 3 && (
-          <Step3Meiosis2
-            key={`step3-${stepKey}`}
-            onComplete={handleStepComplete}
-            showToast={showToast}
-          />
-        )}
-        {currentStep === 4 && (
-          <CompletionReport
-            key={`step4-${stepKey}`}
-            onRestart={() => handleSelectStep(1)}
-            onSelectStep={handleSelectStep}
-          />
-        )}
+        <div
+          className={`flex-1 flex flex-col transition-all duration-300 ease-in-out ${
+            isTransitioning ? 'opacity-0 scale-[0.985] blur-[1px]' : 'opacity-100 scale-100 blur-0'
+          }`}
+        >
+          {currentStep === 1 && (
+            <Step1Prophase
+              key={`step1-${stepKey}`}
+              onComplete={handleStepComplete}
+              showToast={showToast}
+            />
+          )}
+          {currentStep === 2 && (
+            <Step2Anaphase1
+              key={`step2-${stepKey}`}
+              onComplete={handleStepComplete}
+              showToast={showToast}
+            />
+          )}
+          {currentStep === 3 && (
+            <Step3Meiosis2
+              key={`step3-${stepKey}`}
+              onComplete={handleStepComplete}
+              showToast={showToast}
+            />
+          )}
+          {currentStep === 4 && (
+            <CompletionReport
+              key={`step4-${stepKey}`}
+              onRestart={() => handleSelectStep(1)}
+              onSelectStep={handleSelectStep}
+            />
+          )}
+        </div>
 
         {/* Global Toast Notification - Vibrant Floating Pill */}
         {toast && (

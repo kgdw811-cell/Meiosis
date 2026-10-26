@@ -26,3 +26,32 @@ body {
     height: auto !important;
   }
 }
+
+@keyframes autoProgressFill {
+  0% {
+    width: 0%;
+  }
+  100% {
+    width: 100%;
+  }
+}
+
+.animate-auto-progress {
+  animation: autoProgressFill 1.7s cubic-bezier(0.2, 0, 0.2, 1) forwards;
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    opacity: 0.95;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.02);
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulseGlow 1.8s ease-in-out infinite;
+}
+

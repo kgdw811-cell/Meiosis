@@ -366,11 +366,23 @@ export const Step1Prophase: React.FC<Step1ProphaseProps> = ({ onComplete, showTo
 
         {/* Completion Overlay Banner inside Workspace */}
         {pairedCount === PAIR_SIZES.length && (
-          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-30 bg-emerald-600 text-white px-5 py-2.5 rounded-2xl shadow-xl border-2 border-emerald-300 flex items-center gap-3 animate-bounce">
-            <CheckCircle2 className="w-6 h-6 text-emerald-100" />
-            <div>
-              <div className="font-bold text-sm">2가 염색체 3쌍 형성 완료!</div>
-              <div className="text-xs text-emerald-100">상동염색체가 나란히 접합했습니다 (2n=6)</div>
+          <div className="absolute bottom-5 left-1/2 -translate-x-1/2 z-30 bg-slate-900/95 text-white px-6 py-3.5 rounded-2xl shadow-2xl border-2 border-emerald-400 flex flex-col gap-2 min-w-[320px] sm:min-w-[420px] animate-in fade-in zoom-in-95 duration-250 backdrop-blur-md pointer-events-none">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-full bg-emerald-500 text-white flex items-center justify-center shrink-0 shadow-md">
+                <CheckCircle2 className="w-5 h-5 text-white" />
+              </div>
+              <div className="flex-1">
+                <div className="font-extrabold text-sm sm:text-base text-emerald-300">
+                  2가 염색체 3쌍 접합 완료! (2n = 6)
+                </div>
+                <div className="text-xs text-slate-300 font-medium">
+                  상동염색체가 접합했습니다 · 다음 단계(상동 분리)로 자동 전환됩니다
+                </div>
+              </div>
+            </div>
+            {/* Smooth transition progress bar */}
+            <div className="w-full bg-slate-700/80 h-1.5 rounded-full overflow-hidden">
+              <div className="bg-gradient-to-r from-emerald-400 to-cyan-400 h-full rounded-full animate-auto-progress" />
             </div>
           </div>
         )}

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { QuizQuestion } from '../types';
 import { sound } from '../utils/audio';
 import { CheckCircle, XCircle, ArrowRight, Lightbulb } from 'lucide-react';
@@ -44,13 +44,23 @@ export const QuizModal: React.FC<QuizModalProps> = ({ isOpen, step, onPass }) =>
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
   const [isAnswered, setIsAnswered] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
+  const autoAdvanceRef = useRef<NodeJS.Timeout | null>(null);
+
+  const clearTimer = () => {
+    if (autoAdvanceRef.current) {
+      clearTimeout(autoAdvanceRef.current);
+      autoAdvanceRef.current = null;
+    }
+  };
 
   useEffect(() => {
     if (isOpen) {
       setSelectedOption(null);
       setIsAnswered(false);
       setIsCorrect(false);
+      clearTimer();
     }
+    return () => clearTimer();
   }, [isOpen, step]);
 
   if (!isOpen) return null;
@@ -67,14 +77,25 @@ export const QuizModal: React.FC<QuizModalProps> = ({ isOpen, step, onPass }) =>
 
     if (correct) {
       sound.playSuccess();
+      clearTimer();
+      // Automatically advance to the next stage smoothly after 2.2 seconds
+      autoAdvanceRef.current = setTimeout(() => {
+        onPass();
+      }, 2200);
     } else {
       sound.playWrong();
+      clearTimer();
     }
   };
 
+  const handleManualPass = () => {
+    clearTimer();
+    onPass();
+  };
+
   return (
-    <div className="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in duration-200">
-      <div className="bg-white rounded-3xl max-w-lg w-full shadow-2xl border border-slate-200 overflow-hidden flex flex-col">
+    <div className="fixed inset-0 z-50 bg-slate-950/75 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in duration-200">
+      <div className="bg-white rounded-3xl max-w-lg w-full shadow-2xl border border-slate-200 overflow-hidden flex flex-col animate-in zoom-in-95 duration-200">
         {/* Header */}
         <div className="bg-indigo-900 px-6 py-4 text-white flex items-center justify-between border-b-2 border-indigo-800">
           <div className="flex items-center gap-2.5">
@@ -155,16 +176,26 @@ export const QuizModal: React.FC<QuizModalProps> = ({ isOpen, step, onPass }) =>
         </div>
 
         {/* Footer */}
-        <div className="bg-slate-50 px-6 py-4 border-t border-slate-100 flex justify-end">
-          {isCorrect && (
-            <button
-              id="quiz-continue-btn"
-              onClick={onPass}
-              className="px-6 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-white rounded-xl text-xs sm:text-sm font-black shadow-[0_4px_0_0_#059669] active:shadow-none active:translate-y-1 flex items-center gap-2 cursor-pointer transition-all border-2 border-emerald-400"
-            >
-              <span>{step === 2 ? '감수 2분열 시작하기 ➔' : '최종 결과 리포트 확인하기 ➔'}</span>
-              <ArrowRight className="w-4 h-4" />
-            </button>
+        <div className="bg-slate-50 px-6 py-4 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-3">
+          {isCorrect ? (
+            <>
+              <span className="text-xs text-slate-500 font-semibold flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                <span>2초 후 다음 단계로 자동 이동합니다...</span>
+              </span>
+              <button
+                id="quiz-continue-btn"
+                onClick={handleManualPass}
+                className="w-full sm:w-auto relative overflow-hidden px-6 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-white rounded-xl text-xs sm:text-sm font-black shadow-[0_4px_0_0_#059669] active:shadow-none active:translate-y-1 flex items-center justify-center gap-2 cursor-pointer transition-all border-2 border-emerald-400 group"
+              >
+                <span>{step === 2 ? '감수 2분열 시작하기' : '최종 결과 확인하기'} ➔</span>
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+              </button>
+            </>
+          ) : (
+            <div className="text-xs text-slate-400 font-medium">
+              보기 중 올바른 설명을 선택하세요.
+            </div>
           )}
         </div>
       </div>

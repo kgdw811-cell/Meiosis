@@ -360,11 +360,23 @@ export const Step2Anaphase1: React.FC<Step2Anaphase1Props> = ({ onComplete, show
 
           {/* Completion Banner */}
           {separatedCount === 6 && (
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-30 bg-indigo-600 text-white px-5 py-2.5 rounded-2xl shadow-xl border-2 border-indigo-300 flex items-center gap-3 animate-bounce">
-              <CheckCircle2 className="w-6 h-6 text-indigo-100" />
-              <div>
-                <div className="font-bold text-sm">상동염색체 분리 완료! (1분열 완료)</div>
-                <div className="text-xs text-indigo-100">각 극으로 3개씩 이동: 2n=6 → n=3 반감 · 잠시 후 퀴즈로 자동 이동합니다</div>
+            <div className="absolute bottom-5 left-1/2 -translate-x-1/2 z-30 bg-slate-900/95 text-white px-6 py-3.5 rounded-2xl shadow-2xl border-2 border-cyan-400 flex flex-col gap-2 min-w-[320px] sm:min-w-[420px] animate-in fade-in zoom-in-95 duration-250 backdrop-blur-md pointer-events-none">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-full bg-cyan-500 text-indigo-950 flex items-center justify-center shrink-0 shadow-md font-bold">
+                  <CheckCircle2 className="w-5 h-5 text-indigo-950" />
+                </div>
+                <div className="flex-1">
+                  <div className="font-extrabold text-sm sm:text-base text-cyan-300">
+                    상동염색체 양극 분리 완료! (2n=6 ➔ n=3)
+                  </div>
+                  <div className="text-xs text-slate-300 font-medium">
+                    염색체 수 절반 반감 · 잠시 후 핵심 개념 퀴즈로 자동 전환됩니다
+                  </div>
+                </div>
+              </div>
+              {/* Smooth transition progress bar */}
+              <div className="w-full bg-slate-700/80 h-1.5 rounded-full overflow-hidden">
+                <div className="bg-gradient-to-r from-cyan-400 to-indigo-400 h-full rounded-full animate-auto-progress" />
               </div>
             </div>
           )}

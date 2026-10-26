@@ -1,32 +1,23 @@
 import React from 'react';
-import { Volume2, VolumeX, RotateCcw, ArrowRight, HelpCircle, Sparkles, BookOpen } from 'lucide-react';
-import { User } from 'firebase/auth';
+import { Volume2, VolumeX, RotateCcw, BookOpen } from 'lucide-react';
 import { SimStep } from '../types';
 import { STEP_INFOS } from '../data/chromosomes';
 
 interface HeaderProps {
   currentStep: SimStep;
   soundEnabled: boolean;
-  canNext: boolean;
-  user?: User | null;
   onToggleSound: () => void;
   onReset: () => void;
-  onNext: () => void;
   onOpenGuide: () => void;
-  onOpenDrive?: () => void;
   onSelectStep: (step: SimStep) => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
   currentStep,
   soundEnabled,
-  canNext,
-  user,
   onToggleSound,
   onReset,
-  onNext,
   onOpenGuide,
-  onOpenDrive,
   onSelectStep
 }) => {
   const stepInfo = STEP_INFOS[currentStep];
@@ -103,28 +94,6 @@ export const Header: React.FC<HeaderProps> = ({
           >
             <RotateCcw className="w-3.5 h-3.5 text-slate-300" />
             <span>다시하기</span>
-          </button>
-
-          <button
-            id="next-step-btn"
-            disabled={!canNext && currentStep !== 4}
-            onClick={onNext}
-            className={`px-4 sm:px-6 py-2 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-1.5 transition-all text-white ${
-              canNext || currentStep === 4
-                ? 'bg-emerald-500 hover:bg-emerald-400 shadow-[0_4px_0_0_#059669] active:shadow-none active:translate-y-1 cursor-pointer'
-                : 'bg-slate-700/60 text-slate-400 border border-slate-600 cursor-not-allowed opacity-60'
-            }`}
-          >
-            <span>
-              {currentStep === 1
-                ? '다음 단계 ➔'
-                : currentStep === 2
-                ? '개념 퀴즈 ➔'
-                : currentStep === 3
-                ? '개념 퀴즈 ➔'
-                : '처음부터 다시'}
-            </span>
-            <ArrowRight className="w-4 h-4" />
           </button>
         </div>
       </div>

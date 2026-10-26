@@ -615,21 +615,30 @@ export const Step3Meiosis2: React.FC<Step3Meiosis2Props> = ({ onComplete, showTo
 
       {/* Completion Banner */}
       {separatedCount === 12 && (
-        <div className="mt-2 bg-emerald-500 text-white px-5 py-2.5 rounded-2xl shadow-lg border-2 border-emerald-400 flex items-center justify-between gap-3 animate-in fade-in slide-in-from-bottom duration-300">
-          <div className="flex items-center gap-3">
-            <CheckCircle2 className="w-5 h-5 text-white" />
-            <div>
-              <div className="font-bold text-sm">
-                감수 2분열 완료! 최종 4개의 생식세포 딸세포 형성
+        <div className="mt-2 bg-slate-900/95 text-white px-6 py-3 rounded-2xl shadow-2xl border-2 border-emerald-400 flex flex-col gap-2 animate-in fade-in slide-in-from-bottom duration-300 backdrop-blur-md">
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-full bg-emerald-500 text-white flex items-center justify-center shrink-0 shadow-md">
+                <CheckCircle2 className="w-5 h-5 text-white" />
               </div>
-              <div className="text-xs text-emerald-100 font-medium">
-                각 생식세포 염색체 수: n = 3 (염색분체 3개) · 잠시 후 퀴즈로 자동 이동합니다
+              <div>
+                <div className="font-extrabold text-sm sm:text-base text-emerald-300">
+                  감수 2분열 완료! 최종 4개의 생식세포 딸세포 형성
+                </div>
+                <div className="text-xs text-slate-300 font-medium">
+                  염색체 수 유지(n=3), DNA양 반감 · 잠시 후 핵심 퀴즈 및 탐구 리포트로 자동 이동합니다
+                </div>
               </div>
             </div>
+            <div className="hidden sm:flex items-center gap-1.5 bg-emerald-950/80 border border-emerald-700/80 text-emerald-300 px-3 py-1 rounded-full text-xs font-bold">
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+              <span>자동 이동 중...</span>
+            </div>
           </div>
-          <span className="text-xs bg-indigo-900 text-cyan-300 px-3 py-1.5 rounded-xl font-black shadow-xs">
-            자동 이동 중 (또는 퀴즈 클릭)
-          </span>
+          {/* Smooth transition progress bar */}
+          <div className="w-full bg-slate-700/80 h-1.5 rounded-full overflow-hidden">
+            <div className="bg-gradient-to-r from-emerald-400 to-teal-300 h-full rounded-full animate-auto-progress" />
+          </div>
         </div>
       )}
     </div>
